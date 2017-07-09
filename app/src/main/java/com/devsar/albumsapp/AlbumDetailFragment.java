@@ -10,9 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.devsar.albumsapp.albumSupport.Album;
+import com.devsar.albumsapp.albumSupport.AlbumPicture;
+import com.devsar.albumsapp.albumSupport.Connector;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +42,8 @@ public class AlbumDetailFragment extends Fragment {
     private static final String KEY_ALBUM = "com.devsar.albumsapp.AlbumDetailFragment.album";
 
     private Album album;
+
+    private String base_url = "http://jsonplaceholder.typicode.com/albums/";
 
     private OnFragmentInteractionListener mListener;
 
@@ -55,12 +70,12 @@ public class AlbumDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             album = (Album) getArguments().getSerializable(KEY_ALBUM);
+            Log.e("ret", "attempting to call retrieve data, for extra data");
+            if(savedInstanceState == null){
+                retrieveData();
+            }
         }
-        else{
-            //for testing purposes
-            Album a = new Album(1,3,"");
-        }
-        adapter = new AlbumDetailListAdapter(getActivity(), album /*a*/);
+        adapter = new AlbumDetailListAdapter(getActivity(), album);
     }
 
     @Override
@@ -68,6 +83,37 @@ public class AlbumDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_ALBUM, album);
     }
+
+    private void retrieveData(){
+        //load data
+        String url = base_url + String.valueOf(album.getId())+"/photos";
+        Request jsonObjectRequest = new Request(Request.Method.GET, url, new ResponseErrorListener()) {
+            @Override
+            protected Response<List<AlbumPicture>> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<AlbumPicture>>(){}.getType();
+                    ArrayList<AlbumPicture> extraData;
+                    extraData = gson.fromJson(json, listType);
+                    album.setAlbumPictureAndExtraData(extraData);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                return Response.success(album.getAlbumPictureAndExtraData(),
+                        HttpHeaderParser.parseCacheHeaders(response));
+
+            }
+
+
+            @Override
+            protected void deliverResponse(Object response) {
+                //
+            }
+        };
+        Connector.getRequestQueue(getActivity()).add(jsonObjectRequest);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -115,5 +161,13 @@ public class AlbumDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class ResponseErrorListener implements Response.ErrorListener{
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("error", error.getMessage());
+        }
     }
 }

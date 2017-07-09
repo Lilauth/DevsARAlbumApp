@@ -26,7 +26,7 @@ import java.util.List;
 
 
 public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAdapterListener{
-    
+
     private static final String KEY_ALBUMS = "com.devsar.albumsapp.AlbumList.albums";
 
     private AlbumListAdapter adapter; // =  new AlbumListAdapter(getActivity(),this, this.albums);

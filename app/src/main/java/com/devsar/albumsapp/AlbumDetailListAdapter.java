@@ -8,28 +8,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.devsar.albumsapp.albumSupport.Album;
 import com.devsar.albumsapp.albumSupport.AlbumPicture;
 import com.devsar.albumsapp.albumSupport.Connector;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by lilauth on 7/6/17.
@@ -38,43 +23,13 @@ import java.util.List;
 public class AlbumDetailListAdapter extends BaseAdapter {
     private Context myContext;
     private Album album;
-    private String base_url = "http://jsonplaceholder.typicode.com/albums/";
-    private RequestQueue requestQueue;
     private ImageLoader imageLoader;
 
-    public AlbumDetailListAdapter(Context context, Album al){
+    public AlbumDetailListAdapter(Context context, Album al) {
         this.myContext = context;
         this.album = al;
 
-        requestQueue = Connector.getRequestQueue(context);
-        imageLoader = Connector.getImageLoader();
-        //load data
-        String url = base_url + String.valueOf(album.getId())+"/photos";
-        Request jsonObjectRequest = new Request(Request.Method.GET, url, new AlbumDetailListAdapter.ResponseErrorListener()) {
-            @Override
-            protected Response<List<AlbumPicture>> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                    Gson gson = new Gson();
-                    Type listType = new TypeToken<List<AlbumPicture>>(){}.getType();
-                    ArrayList<AlbumPicture> extraData = new ArrayList<>();
-                    extraData = gson.fromJson(json, listType);
-                    album.setAlbumPictureAndExtraData(extraData);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                return Response.success(album.getAlbumPictureAndExtraData(),
-                        HttpHeaderParser.parseCacheHeaders(response));
-
-            }
-
-
-            @Override
-            protected void deliverResponse(Object response) {
-                //
-            }
-        };
-        requestQueue.add(jsonObjectRequest);
+        this.imageLoader = Connector.getImageLoader();
     }
 
     @Override
@@ -126,14 +81,6 @@ public class AlbumDetailListAdapter extends BaseAdapter {
         TextView picture_title;
         NetworkImageView icon;
 
-    }
-
-    private class ResponseErrorListener implements Response.ErrorListener{
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.e("error", error.getMessage());
-        }
     }
 
 }
