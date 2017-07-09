@@ -12,6 +12,8 @@ import android.widget.ListView;
 
 import com.devsar.albumsapp.albumSupport.Album;
 
+import java.io.Serializable;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -24,11 +26,9 @@ public class AlbumDetailFragment extends Fragment {
     private AlbumDetailListAdapter adapter;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String KEY_ALBUM = "com.devsar.albumsapp.AlbumDetailFragment.album";
 
-    private Album mParam1;
-    private String mParam2;
+    private Album album;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,8 +45,7 @@ public class AlbumDetailFragment extends Fragment {
     public static AlbumDetailFragment newInstance(Album album) {
         AlbumDetailFragment fragment = new AlbumDetailFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, album);
-        //args.putString(ARG_PARAM2, param2);
+        args.putSerializable(KEY_ALBUM, album);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,9 +54,19 @@ public class AlbumDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = (Album) getArguments().getSerializable(ARG_PARAM1);
-           // mParam2 = getArguments().getString(ARG_PARAM2);
+            album = (Album) getArguments().getSerializable(KEY_ALBUM);
         }
+        else{
+            //for testing purposes
+            Album a = new Album(1,3,"");
+        }
+        adapter = new AlbumDetailListAdapter(getActivity(), album /*a*/);
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_ALBUM, album);
     }
 
     @Override
@@ -66,8 +75,9 @@ public class AlbumDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_album_detail, container, false);
         //hardcoded
         //Album a = new Album(1,3,"");
-        adapter = new AlbumDetailListAdapter(getActivity(), mParam1 /*a*/);
-        Log.e("album", mParam1.getTitle());
+        //adapter = new AlbumDetailListAdapter(getActivity(), album /*a*/);
+        Log.e("album", album.getTitle());
+        //erase between comments
         ListView detail_list = (ListView) rootView.findViewById(R.id.album_detail_list);
         detail_list.setAdapter(adapter);
         return rootView;

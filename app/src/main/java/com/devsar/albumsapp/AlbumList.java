@@ -2,6 +2,7 @@ package com.devsar.albumsapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.devsar.albumsapp.albumSupport.Album;
 import com.devsar.albumsapp.albumSupport.Connector;
 
@@ -32,7 +35,7 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
     private static final String ARG_PARAM1 = "param1";
     private static final String KEY_ALBUMS = "com.devsar.albumsapp.AlbumList.albums";
 
-    private AlbumListAdapter adapter;
+    private AlbumListAdapter adapter; // =  new AlbumListAdapter(getActivity(),this, this.albums);
     private String url = "http://jsonplaceholder.typicode.com/albums/";
     private List<Album> albums;
 
@@ -100,11 +103,13 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null){
+            Log.e("ret", "attempting to call retrieve data");
             retrieveData();
         }
         else{
             this.albums = (List<Album>) savedInstanceState.getSerializable(KEY_ALBUMS);
         }
+        adapter = new AlbumListAdapter(getActivity(),this, this.albums);
     }
 
     @Override
@@ -117,8 +122,9 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_album_list, container, false);
-        adapter = new AlbumListAdapter(getActivity(),this, this.albums);
+        // adapter = new AlbumListAdapter(getActivity(),this, this.albums);
         ListView album_list = (ListView) rootView.findViewById(R.id.album_list);
+
         album_list.setAdapter(adapter);
         return rootView;
     }
@@ -147,7 +153,7 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
     }
 
     public interface OnAlbumListInteractionListener{
-        public void showAlbumInformation(Album album);
+        void showAlbumInformation(Album album);
     }
 
     private class ResponseErrorListener implements Response.ErrorListener{

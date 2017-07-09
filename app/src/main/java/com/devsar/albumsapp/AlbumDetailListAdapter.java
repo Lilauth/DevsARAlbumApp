@@ -83,6 +83,7 @@ public class AlbumDetailListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+
         return album.getAlbumPictureAndExtraData().size();
     }
 
