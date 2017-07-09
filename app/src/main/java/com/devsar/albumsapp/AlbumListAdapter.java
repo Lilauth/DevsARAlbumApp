@@ -1,29 +1,12 @@
 package com.devsar.albumsapp;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.devsar.albumsapp.albumSupport.Album;
-import com.devsar.albumsapp.albumSupport.Connector;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -94,7 +77,7 @@ public class AlbumListAdapter extends BaseAdapter {
     }
 
     public interface AlbumListAdapterListener{
-        public void onAlbumClick(Album a);
+        void onAlbumClick(Album a);
     }
 
     private class GetAlbumDetails implements  View.OnClickListener{

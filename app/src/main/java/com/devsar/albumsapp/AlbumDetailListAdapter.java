@@ -57,9 +57,9 @@ public class AlbumDetailListAdapter extends BaseAdapter {
                         JSONObject object = Jarray.getJSONObject(i);
                         //complete album info
                         AlbumPicture a = new AlbumPicture(((Integer)object.get("id")), (String) object.get("title"), (String) object.get("url"), (String) object.get("thumbnailUrl"));
-                        Log.e("album:", a.toString());
                         album.getAlbumPictureAndExtraData().add(a);
                     }
+                    Log.e("album siz", String.valueOf(album.getAlbumPictureAndExtraData().size()));
                 } catch (JSONException e) {
                     Log.e("giving up", response.toString());
                     e.printStackTrace();
@@ -100,6 +100,7 @@ public class AlbumDetailListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View resultView;
         AlbumDetailListAdapterViewHolder viewHolder;
+        Log.e("view", "creating detail list view adapter");
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) myContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             resultView =  inflater.inflate(R.layout.list_adapter_details, parent, false);
