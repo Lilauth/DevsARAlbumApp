@@ -19,12 +19,17 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.devsar.albumsapp.albumSupport.Album;
 import com.devsar.albumsapp.albumSupport.AlbumPicture;
 import com.devsar.albumsapp.albumSupport.Connector;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lilauth on 7/6/17.
@@ -41,33 +46,24 @@ public class AlbumDetailListAdapter extends BaseAdapter {
         this.myContext = context;
         this.album = al;
 
-        requestQueue = Connector.getRequestQueue(context); //Volley.newRequestQueue(myContext);
+        requestQueue = Connector.getRequestQueue(context);
         imageLoader = Connector.getImageLoader();
         //load data
         String url = base_url + String.valueOf(album.getId())+"/photos";
         Request jsonObjectRequest = new Request(Request.Method.GET, url, new AlbumDetailListAdapter.ResponseErrorListener()) {
             @Override
-            protected Response<Album> parseNetworkResponse(NetworkResponse response) {
+            protected Response<List<AlbumPicture>> parseNetworkResponse(NetworkResponse response) {
                 try {
                     String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                    json = "{\"details\":" +json+"}";
-                    JSONObject Jobject = new JSONObject(json);
-                    JSONArray Jarray = Jobject.getJSONArray("details");
-                    for (int i = 0; i < Jarray.length(); i++) {
-                        JSONObject object = Jarray.getJSONObject(i);
-                        //complete album info
-                        AlbumPicture a = new AlbumPicture(((Integer)object.get("id")), (String) object.get("title"), (String) object.get("url"), (String) object.get("thumbnailUrl"));
-                        album.getAlbumPictureAndExtraData().add(a);
-                    }
-                    Log.e("album siz", String.valueOf(album.getAlbumPictureAndExtraData().size()));
-                } catch (JSONException e) {
-                    Log.e("giving up", response.toString());
-                    e.printStackTrace();
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<AlbumPicture>>(){}.getType();
+                    ArrayList<AlbumPicture> extraData = new ArrayList<>();
+                    extraData = gson.fromJson(json, listType);
+                    album.setAlbumPictureAndExtraData(extraData);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-
-                return Response.success(album,
+                return Response.success(album.getAlbumPictureAndExtraData(),
                         HttpHeaderParser.parseCacheHeaders(response));
 
             }
@@ -83,7 +79,7 @@ public class AlbumDetailListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-
+        Log.e("getCount()", String.valueOf(album.getAlbumPictureAndExtraData().size()));
         return album.getAlbumPictureAndExtraData().size();
     }
 

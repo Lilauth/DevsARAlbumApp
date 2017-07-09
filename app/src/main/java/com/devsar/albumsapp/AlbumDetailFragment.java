@@ -73,11 +73,6 @@ public class AlbumDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_album_detail, container, false);
-        //hardcoded
-        //Album a = new Album(1,3,"");
-        //adapter = new AlbumDetailListAdapter(getActivity(), album /*a*/);
-        Log.e("album", album.getTitle());
-        //erase between comments
         ListView detail_list = (ListView) rootView.findViewById(R.id.album_detail_list);
         detail_list.setAdapter(adapter);
         return rootView;

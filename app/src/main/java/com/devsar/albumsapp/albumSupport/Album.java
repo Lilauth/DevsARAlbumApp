@@ -29,6 +29,9 @@ public class Album implements Serializable{
         return title;
     }
 
+    public void setAlbumPictureAndExtraData(List<AlbumPicture> extraData){
+        albumPictureAndExtraData = extraData;
+    }
 
     public List<AlbumPicture> getAlbumPictureAndExtraData(){
         if(albumPictureAndExtraData == null){albumPictureAndExtraData = new ArrayList<>();}
