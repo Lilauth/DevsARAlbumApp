@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/album_icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -12,7 +12,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp">
-    </ImageView>
+    </com.android.volley.toolbox.NetworkImageView>
 
     <TextView
         android:id="@+id/lb_picture_title"

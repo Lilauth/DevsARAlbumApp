@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,8 +65,9 @@ public class AlbumDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_album_detail, container, false);
         //hardcoded
-        Album a = new Album(1,3,"");
-        adapter = new AlbumDetailListAdapter(getActivity(), /*mParam1*/a);
+        //Album a = new Album(1,3,"");
+        adapter = new AlbumDetailListAdapter(getActivity(), mParam1 /*a*/);
+        Log.e("album", mParam1.getTitle());
         ListView detail_list = (ListView) rootView.findViewById(R.id.album_detail_list);
         detail_list.setAdapter(adapter);
         return rootView;

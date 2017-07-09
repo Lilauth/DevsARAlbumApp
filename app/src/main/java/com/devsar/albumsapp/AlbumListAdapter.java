@@ -1,6 +1,7 @@
 package com.devsar.albumsapp;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.Volley;
 import com.devsar.albumsapp.albumSupport.Album;
+import com.devsar.albumsapp.albumSupport.Connector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,52 +34,11 @@ public class AlbumListAdapter extends BaseAdapter {
     private Context myContext;
     private List<Album> albums;
     private AlbumListAdapterListener mListener;
-    private RequestQueue requestQueue;
-    private String url = "http://jsonplaceholder.typicode.com/albums/";
 
-    public AlbumListAdapter(Context context, AlbumListAdapterListener listener){
+    public AlbumListAdapter(Context context, AlbumListAdapterListener listener, List<Album> albums){
         this.myContext = context;
-        //this.albums = albums;
-        this.albums = new ArrayList<>();
+        this.albums = albums;
         this.mListener = listener;
-
-        requestQueue = Volley.newRequestQueue(myContext);
-        //load data
-        Request jsonObjectRequest = new Request(Request.Method.GET, url, new ResponseErrorListener()) {
-            @Override
-            protected Response<List<Album>> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                    json = "{\"albums\":" +json+"}";
-                    JSONObject Jobject = new JSONObject(json);
-                    JSONArray Jarray = Jobject.getJSONArray("albums");
-                    for (int i = 0; i < Jarray.length(); i++) {
-                        JSONObject object = Jarray.getJSONObject(i);
-                        //complete album info
-                        Album a = new Album(((Integer) object.get("userId")),((Integer)object.get("id")), (String) object.get("title"));
-                        albums.add(a);
-                    }
-
-                } catch (JSONException e) {
-                    Log.e("giving up", response.toString());
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                return Response.success(albums,
-                        HttpHeaderParser.parseCacheHeaders(response));
-
-
-            }
-
-
-            @Override
-            protected void deliverResponse(Object response) {
-                //
-            }
-        };
-        requestQueue.add(jsonObjectRequest);
     }
 
     @Override
@@ -135,14 +95,6 @@ public class AlbumListAdapter extends BaseAdapter {
 
     public interface AlbumListAdapterListener{
         public void onAlbumClick(Album a);
-    }
-
-    private class ResponseErrorListener implements Response.ErrorListener{
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.e("error", error.getMessage());
-        }
     }
 
     private class GetAlbumDetails implements  View.OnClickListener{
