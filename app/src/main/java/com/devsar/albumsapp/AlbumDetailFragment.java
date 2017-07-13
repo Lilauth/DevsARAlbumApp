@@ -97,6 +97,7 @@ public class AlbumDetailFragment extends Fragment {
                     ArrayList<AlbumPicture> extraData;
                     extraData = gson.fromJson(json, listType);
                     album.setAlbumPictureAndExtraData(extraData);
+                    adapter.notifyDataSetChanged();
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

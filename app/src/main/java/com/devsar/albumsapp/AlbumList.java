@@ -31,7 +31,7 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
 
     private AlbumListAdapter adapter; // =  new AlbumListAdapter(getActivity(),this, this.albums);
     private String url = "http://jsonplaceholder.typicode.com/albums/";
-    private List<Album> albums;
+    private List<Album> albums = new ArrayList<>();
 
     private OnAlbumListInteractionListener mListener;
 
@@ -54,7 +54,7 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
     }
 
     private void retrieveData(){
-        albums = new ArrayList<>();
+
         Request jsonObjectRequest = new Request(Request.Method.GET, url, new ResponseErrorListener()) {
             @Override
             protected Response<List<Album>> parseNetworkResponse(NetworkResponse response) {
@@ -62,7 +62,10 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
                     String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                     Gson gson = new Gson();
                     Type listType = new TypeToken<List<Album>>(){}.getType();
-                    albums = gson.fromJson(json, listType);
+                    albums.clear();
+                    List<Album> received = gson.fromJson(json, listType);
+                    albums.addAll(received);
+                    adapter.notifyDataSetChanged();
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
