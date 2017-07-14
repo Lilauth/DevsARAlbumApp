@@ -53,6 +53,17 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
         return fragment;
     }
 
+    private void updateUI(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                adapter.notifyDataSetChanged();
+
+            }
+        });
+    }
+
     private void retrieveData(){
 
         Request jsonObjectRequest = new Request(Request.Method.GET, url, new ResponseErrorListener()) {
@@ -65,7 +76,8 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
                     albums.clear();
                     List<Album> received = gson.fromJson(json, listType);
                     albums.addAll(received);
-                    adapter.notifyDataSetChanged();
+                    updateUI();
+
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -90,9 +102,11 @@ public class AlbumList extends Fragment implements AlbumListAdapter.AlbumListAda
         if(savedInstanceState == null){
             Log.e("ret", "attempting to call retrieve data");
             retrieveData();
+            //adapter = new AlbumListAdapter(getActivity(),this, this.albums);
         }
         else{
             this.albums = (List<Album>) savedInstanceState.getSerializable(KEY_ALBUMS);
+            //updateUI();
         }
         adapter = new AlbumListAdapter(getActivity(),this, this.albums);
     }

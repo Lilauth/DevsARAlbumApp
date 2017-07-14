@@ -84,6 +84,17 @@ public class AlbumDetailFragment extends Fragment {
         outState.putSerializable(KEY_ALBUM, album);
     }
 
+    private void updateUI(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                adapter.notifyDataSetChanged();
+
+            }
+        });
+    }
+
     private void retrieveData(){
         //load data
         String url = base_url + String.valueOf(album.getId())+"/photos";
@@ -97,7 +108,7 @@ public class AlbumDetailFragment extends Fragment {
                     ArrayList<AlbumPicture> extraData;
                     extraData = gson.fromJson(json, listType);
                     album.setAlbumPictureAndExtraData(extraData);
-                    adapter.notifyDataSetChanged();
+                    updateUI();
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
